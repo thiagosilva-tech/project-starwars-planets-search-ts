@@ -9,6 +9,7 @@ import Header from './components/Header';
 function App() {
   const [planets, setPlanets] = useState<Planets[]>([]);
   const [loading, setLoading] = useState(true);
+  const [nameFilter, setNameFilter] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -23,12 +24,16 @@ function App() {
     fetchData();
   }, []);
 
+  const handleFilterChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+    setNameFilter(target.value);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <PlanetContext.Provider value={ planets }>
+    <PlanetContext.Provider value={ { planets, nameFilter, handleFilterChange } }>
       <Header />
       <Table />
     </PlanetContext.Provider>

@@ -4,7 +4,7 @@ import PlanetContext from '../../context/PlanetContext';
 import './Header.css';
 
 function Header() {
-  const planets = useContext(PlanetContext);
+  const { planets, handleFilterChange, nameFilter } = useContext(PlanetContext);
   const [keysFilter, setKeysFilter] = useState(Object.keys(planets[0]));
   const [keysOrder, setKeysOrder] = useState(Object.keys(planets[0]));
 
@@ -12,7 +12,12 @@ function Header() {
     <header className="conteiner">
       <div className="conteiner_input">
         <h1>Projeto Star Wars - Trybe</h1>
-        <input className="input_filter" />
+        <input
+          value={ nameFilter }
+          data-testid="name-filter"
+          className="input_filter"
+          onChange={ handleFilterChange }
+        />
       </div>
       <form className="container_form">
         <label htmlFor="select_genery">

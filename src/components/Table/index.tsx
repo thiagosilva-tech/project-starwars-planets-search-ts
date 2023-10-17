@@ -1,9 +1,22 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import PlanetContext from '../../context/PlanetContext';
 import Planet from '../Planet';
 
 function Table() {
-  const planets = useContext(PlanetContext);
+  const { planets, nameFilter } = useContext(PlanetContext);
+  const [planetsFilter, setPlanetsFilter] = useState(planets);
+
+  useEffect(() => {
+    if (nameFilter === '') {
+      setPlanetsFilter(planets);
+    } else {
+      const filtered = planets.filter(
+        (planet) => planet.name.toLowerCase().includes(nameFilter),
+      );
+      setPlanetsFilter(filtered);
+    }
+  }, [nameFilter, planets]);
+
   return (
     <main>
       <table>
@@ -25,7 +38,7 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          {planets.map((planet) => {
+          {planetsFilter.map((planet) => {
             return (
               <Planet key={ planet.name } planet={ planet } />
             );
