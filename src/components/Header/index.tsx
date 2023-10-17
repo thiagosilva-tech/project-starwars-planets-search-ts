@@ -3,10 +3,40 @@ import PlanetContext from '../../context/PlanetContext';
 
 import './Header.css';
 
+const INITIAL_KEYS_FILTER = [
+  'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water',
+];
+
+const INITIAL_FILTERS = {
+  columnFilter: 'population',
+  comparisonFilter: 'maior que',
+  valueFilter: 0,
+};
+
 function Header() {
-  const { planets, handleFilterChange, nameFilter } = useContext(PlanetContext);
-  const [keysFilter, setKeysFilter] = useState(Object.keys(planets[0]));
+  const {
+    planets,
+    handleFilterChange,
+    nameFilter,
+    handleFilters,
+  } = useContext(PlanetContext);
+  const [keysFilter, setKeysFilter] = useState(INITIAL_KEYS_FILTER);
   const [keysOrder, setKeysOrder] = useState(Object.keys(planets[0]));
+  const [filters, setFilters] = useState(INITIAL_FILTERS);
+
+  const handleSubmit = () => {
+    setKeysFilter(keysFilter.filter((key) => key !== filters.columnFilter));
+    handleFilters(filters);
+  };
+
+  const handleChangeFilters = (
+    { target }: React.ChangeEvent<HTMLSelectElement>
+    | React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setFilters({
+      ...filters,
+      [target.name]: target.value });
+  };
 
   return (
     <header className="conteiner">
@@ -19,24 +49,57 @@ function Header() {
           onChange={ handleFilterChange }
         />
       </div>
-      <form className="container_form">
-        <label htmlFor="select_genery">
+      <form
+        className="container_form"
+        onSubmit={ (e) => {
+          e.preventDefault();
+          handleSubmit();
+        } }
+      >
+        <label
+          htmlFor="column-filter"
+        >
           Coluna
         </label>
-        <select name="" id="select_genery">
+        <select
+          id="column-filter"
+          data-testid="column-filter"
+          name="columnFilter"
+          value={ filters.columnFilter }
+          onChange={ handleChangeFilters }
+        >
           {keysFilter.map((key) => {
-            return <option key={ key }>{key}</option>;
+            return <option key={ key } value={ key }>{key}</option>;
           })}
         </select>
-        <label htmlFor="select_operator">
+        <label htmlFor="comparison-filter">
           Operador
         </label>
-        <select name="" id="select_operator">
-          <option>maior que </option>
-          <option>menor que </option>
+        <select
+          id="comparison-filter"
+          data-testid="comparison-filter"
+          name="comparisonFilter"
+          value={ filters.comparisonFilter }
+          onChange={ handleChangeFilters }
+        >
+          <option value="maior que">maior que</option>
+          <option value="menor que">menor que</option>
+          <option value="igual a">igual a</option>
         </select>
-        <input type="number" />
-        <button className="btn">Filtrar</button>
+        <input
+          type="value-filter"
+          data-testid="value-filter"
+          name="valueFilter"
+          value={ filters.valueFilter }
+          onChange={ handleChangeFilters }
+        />
+        <button
+          className="btn"
+          data-testid="button-filter"
+          type="submit"
+        >
+          Filtrar
+        </button>
       </form>
       <form className="container_form">
         <label htmlFor="select_order">

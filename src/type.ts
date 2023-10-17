@@ -14,3 +14,9 @@ export type Planets = {
   url: string,
   residents?: string,
 };
+
+export type Filters = {
+  columnFilter: string,
+  comparisonFilter: string,
+  valueFilter: number,
+};
