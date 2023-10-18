@@ -3,42 +3,37 @@ import PlanetContext from '../../context/PlanetContext';
 import Planet from '../Planet';
 import { Filters, Planets } from '../../type';
 
-function returnPlanet(
-  planet: Planets,
-  { comparisonFilter, columnFilter, valueFilter }: Filters,
-) {
-  if (planet && planet[columnFilter]) {
-    switch (comparisonFilter) {
-      case 'maior que':
-        return planet[columnFilter] > valueFilter;
-      case 'menor que':
-        return planet[columnFilter] < valueFilter;
-      case 'igual a':
-        return planet[columnFilter] === valueFilter;
-      default:
-        return false;
-    }
-  }
-}
-
 function filterByName(planets: Planets[], nameFilter: string) {
   return nameFilter === ''
     ? planets
     : planets.filter((planet) => planet.name.toLowerCase().includes(nameFilter));
 }
 
-function filterByColumn(planets: Planets[], filters: Filters) {
-  console.log(filters);
-
-  if (filters.columnFilter === '') {
+function filterByFilters(
+  planets: Planets[],
+  { comparisonFilter, columnFilter, valueFilter }: Filters,
+) {
+  if (columnFilter === '') {
     return planets;
   }
-  return planets.filter((planet) => returnPlanet(planet, filters));
+  return planets.filter((planet) => {
+    const planetKey = columnFilter as keyof Planets;
+    switch (comparisonFilter) {
+      case 'maior que':
+        return Number(planet[planetKey]) > Number(valueFilter);
+      case 'menor que':
+        return Number(planet[planetKey]) < Number(valueFilter);
+      case 'igual a':
+        return Number(planet[planetKey]) === Number(valueFilter);
+      default:
+        return false;
+    }
+  });
 }
 
 function Table() {
   const { planets, nameFilter, filters } = useContext(PlanetContext);
-  const filteredPlanets = filterByColumn(filterByName(planets, nameFilter), filters);
+  const filteredPlanets = filterByFilters(filterByName(planets, nameFilter), filters);
 
   return (
     <main>

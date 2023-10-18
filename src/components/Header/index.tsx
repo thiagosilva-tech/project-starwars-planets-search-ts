@@ -26,6 +26,7 @@ function Header() {
 
   const handleSubmit = () => {
     setKeysFilter(keysFilter.filter((key) => key !== filters.columnFilter));
+    setKeysOrder(keysOrder);
     handleFilters(filters);
   };
 
