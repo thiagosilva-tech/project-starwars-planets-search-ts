@@ -9,25 +9,33 @@ function filterByName(planets: Planets[], nameFilter: string) {
     : planets.filter((planet) => planet.name.toLowerCase().includes(nameFilter));
 }
 
-function filterByFilters(
-  planets: Planets[],
-  { comparisonFilter, columnFilter, valueFilter }: Filters,
-) {
-  if (columnFilter === '') {
+function filterByFilters(planets: Planets[], arrayFilters: Filters[]) {
+  // Caso não haja filtros, retorne todos os planetas
+  if (arrayFilters.length === 0) {
     return planets;
   }
+  console.log(arrayFilters);
+
   return planets.filter((planet) => {
-    const planetKey = columnFilter as keyof Planets;
-    switch (comparisonFilter) {
-      case 'maior que':
-        return Number(planet[planetKey]) > Number(valueFilter);
-      case 'menor que':
-        return Number(planet[planetKey]) < Number(valueFilter);
-      case 'igual a':
-        return Number(planet[planetKey]) === Number(valueFilter);
-      default:
+    return arrayFilters.reduce((isValid, filter) => {
+      if (!isValid) {
         return false;
-    }
+      }
+
+      const { columnFilter, comparisonFilter, valueFilter } = filter;
+      const planetKey = columnFilter as keyof Planets;
+
+      switch (comparisonFilter) {
+        case 'maior que':
+          return Number(planet[planetKey]) > Number(valueFilter);
+        case 'menor que':
+          return Number(planet[planetKey]) < Number(valueFilter);
+        case 'igual a':
+          return Number(planet[planetKey]) === Number(valueFilter);
+        default:
+          return false;
+      }
+    }, true);
   });
 }
 

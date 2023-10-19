@@ -6,17 +6,11 @@ import Table from './components/Table';
 import { Filters, Planets } from './type';
 import Header from './components/Header';
 
-const INITIAL_FILTERS = {
-  columnFilter: '',
-  comparisonFilter: '',
-  valueFilter: 0,
-};
-
 function App() {
   const [planets, setPlanets] = useState<Planets[]>([]);
   const [loading, setLoading] = useState(true);
   const [nameFilter, setNameFilter] = useState('');
-  const [filters, setFilters] = useState(INITIAL_FILTERS);
+  const [filters, setFilters] = useState<Filters[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -36,7 +30,7 @@ function App() {
   };
 
   const handleFilters = (dataFilters: Filters) => {
-    setFilters(dataFilters);
+    setFilters((prevFilters) => [...prevFilters, dataFilters]);
   };
 
   if (loading) {

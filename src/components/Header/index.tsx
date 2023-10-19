@@ -8,7 +8,7 @@ const INITIAL_KEYS_FILTER = [
 ];
 
 const INITIAL_FILTERS = {
-  columnFilter: 'population',
+  columnFilter: INITIAL_KEYS_FILTER[0],
   comparisonFilter: 'maior que',
   valueFilter: 0,
 };
@@ -18,24 +18,26 @@ function Header() {
     planets,
     handleFilterChange,
     nameFilter,
+    // filters,
     handleFilters,
   } = useContext(PlanetContext);
   const [keysFilter, setKeysFilter] = useState(INITIAL_KEYS_FILTER);
   const [keysOrder, setKeysOrder] = useState(Object.keys(planets[0]));
-  const [filters, setFilters] = useState(INITIAL_FILTERS);
+  const [newFilter, setNewFilter] = useState(INITIAL_FILTERS);
 
   const handleSubmit = () => {
-    setKeysFilter(keysFilter.filter((key) => key !== filters.columnFilter));
+    setKeysFilter(keysFilter.filter((key) => key !== newFilter.columnFilter));
     setKeysOrder(keysOrder);
-    handleFilters(filters);
+    handleFilters(newFilter);
+    setNewFilter(INITIAL_FILTERS);
   };
 
   const handleChangeFilters = (
     { target }: React.ChangeEvent<HTMLSelectElement>
     | React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setFilters({
-      ...filters,
+    setNewFilter({
+      ...newFilter,
       [target.name]: target.value });
   };
 
@@ -66,7 +68,7 @@ function Header() {
           id="column-filter"
           data-testid="column-filter"
           name="columnFilter"
-          value={ filters.columnFilter }
+          value={ newFilter.columnFilter }
           onChange={ handleChangeFilters }
         >
           {keysFilter.map((key) => {
@@ -80,7 +82,7 @@ function Header() {
           id="comparison-filter"
           data-testid="comparison-filter"
           name="comparisonFilter"
-          value={ filters.comparisonFilter }
+          value={ newFilter.comparisonFilter }
           onChange={ handleChangeFilters }
         >
           <option value="maior que">maior que</option>
@@ -91,7 +93,7 @@ function Header() {
           type="value-filter"
           data-testid="value-filter"
           name="valueFilter"
-          value={ filters.valueFilter }
+          value={ newFilter.valueFilter }
           onChange={ handleChangeFilters }
         />
         <button
