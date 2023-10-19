@@ -6,7 +6,8 @@ type PlanetContextType = {
   nameFilter: string,
   handleFilterChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
   handleFilters: (dataFilters: Filters) => void,
-  filters: Filters[]
+  filters: Filters[],
+  handleDelete: (filterDelet: string) => void,
 };
 
 const PlanetContext = createContext({} as PlanetContextType);

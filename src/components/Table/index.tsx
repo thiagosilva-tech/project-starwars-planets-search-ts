@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import PlanetContext from '../../context/PlanetContext';
 import Planet from '../Planet';
 import { Filters, Planets } from '../../type';
@@ -41,7 +41,13 @@ function filterByFilters(planets: Planets[], arrayFilters: Filters[]) {
 
 function Table() {
   const { planets, nameFilter, filters } = useContext(PlanetContext);
-  const filteredPlanets = filterByFilters(filterByName(planets, nameFilter), filters);
+  const [filteredPlanets, setFilteredPlanets] = useState(
+    filterByFilters(filterByName(planets, nameFilter), filters),
+  );
+
+  useEffect(() => {
+    setFilteredPlanets(filterByFilters(filterByName(planets, nameFilter), filters));
+  }, [filters, nameFilter, planets]);
 
   return (
     <main>

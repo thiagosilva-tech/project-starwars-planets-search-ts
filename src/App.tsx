@@ -33,6 +33,14 @@ function App() {
     setFilters((prevFilters) => [...prevFilters, dataFilters]);
   };
 
+  const handleDelete = (filterDelet?:string) => {
+    if (filterDelet === 'all') {
+      setFilters([]);
+    } else {
+      setFilters(filters.filter(({ columnFilter }) => columnFilter !== filterDelet));
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -44,6 +52,7 @@ function App() {
         nameFilter,
         handleFilterChange,
         handleFilters,
+        handleDelete,
         filters,
       } }
     >
