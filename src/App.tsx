@@ -13,6 +13,7 @@ function App() {
   const [nameFilter, setNameFilter] = useState('');
   const [filters, setFilters] = useState<Filters[]>([]);
   const [orderObj, setOrderObj] = useState<OrderObj>(INITIAL_ORDER_OBJ);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -21,6 +22,7 @@ function App() {
       const planetsArray = planetsResults
         .map((planet: Planets) => { delete planet.residents; return planet; });
       setPlanets(planetsArray);
+      setLoading(false);
     }
 
     fetchData();
@@ -59,8 +61,14 @@ function App() {
         filters,
       } }
     >
-      <Header />
-      <Table />
+      {!loading
+        ? (
+          <>
+            <Header />
+            <Table />
+          </>
+        )
+        : <h2>Loading...</h2>}
     </PlanetContext.Provider>
   );
 }
