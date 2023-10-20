@@ -1,3 +1,5 @@
+import { MockPlanets } from './helper/MockPlanets';
+
 export type Planets = {
   climate: string,
   created: string,

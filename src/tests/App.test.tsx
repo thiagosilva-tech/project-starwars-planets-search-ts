@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import App from '../App';
 import {vi} from 'vitest'
 import { MockPlanets } from '../helper/MockPlanets';
@@ -43,9 +43,21 @@ describe('Testa o Componente Header', () => {
   })
 })
 
-
-
 describe('Testa o Componente Table', () => {
+  beforeEach(() => {
+    global.fetch = vi.fn(() => {
+      return Promise.resolve({
+        status: 200,
+        ok: true,
+        json: () => Promise.resolve(MockPlanets)
+      })
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('Testa se existe um thead na tabela', () => {
     render(<App />);
     const headerCell = screen.getByTestId('column-header');
@@ -54,26 +66,10 @@ describe('Testa o Componente Table', () => {
     expect(th).toHaveLength(13);
   });
 
-  // test('Testa se existe os planetas na tabela', async () => {
-  // render(<App />);
-  //   // Aguarda os dados serem carregados
-
-  //   const planets = screen.getAllByTestId('planet-name');
-  //   expect(planets).toHaveLength(11);
-  // });
+  test('Testa se existe os planetas na tabela', async () => {
+  render(<App />);
+    const planets = await screen.findAllByTestId('planet-name');
+    expect(planets).toHaveLength(10);
+  });
 });
 
-// describe('Testa se os filters e sort',()=>{
-//   test('Testa se o name-filter filtra os planetas pelo nome',async()=>{
-//     render(<App/>);
-//     const inputNameFilter = screen.getByTestId('name-filter');
-//     const firstNameFilter = 'o';
-//     const secondNameFilter = 'oo';
-
-//     fireEvent.change(inputNameFilter, {target: {value: firstNameFilter}});
-//     const firstPlanetsFilter = await screen.findAllByTestId('planet-name', {}, {timeout: 10000})
-//     expect(firstPlanetsFilter).toHaveLength(7);
-//   })
-
-  
-// })
