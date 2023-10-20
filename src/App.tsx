@@ -3,14 +3,17 @@ import './App.css';
 import PlanetContext from './context/PlanetContext';
 import fetchPlanets from './helper/fetchPlanets';
 import Table from './components/Table';
-import { Filters, Planets } from './type';
+import { Filters, Order, OrderObj, Planets } from './type';
 import Header from './components/Header';
+
+const INITIAL_ORDER_OBJ = { order: { column: '', sort: '' } };
 
 function App() {
   const [planets, setPlanets] = useState<Planets[]>([]);
   const [loading, setLoading] = useState(true);
   const [nameFilter, setNameFilter] = useState('');
   const [filters, setFilters] = useState<Filters[]>([]);
+  const [orderObj, setOrderObj] = useState<OrderObj>(INITIAL_ORDER_OBJ);
 
   useEffect(() => {
     async function fetchData() {
@@ -41,6 +44,10 @@ function App() {
     }
   };
 
+  const handleOrder = (orderParam: Order) => {
+    setOrderObj({ order: orderParam });
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -52,6 +59,8 @@ function App() {
         nameFilter,
         handleFilterChange,
         handleFilters,
+        orderObj,
+        handleOrder,
         handleDelete,
         filters,
       } }

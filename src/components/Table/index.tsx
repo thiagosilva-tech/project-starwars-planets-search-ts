@@ -14,14 +14,11 @@ function filterByFilters(planets: Planets[], arrayFilters: Filters[]) {
   if (arrayFilters.length === 0) {
     return planets;
   }
-  console.log(arrayFilters);
-
   return planets.filter((planet) => {
     return arrayFilters.reduce((isValid, filter) => {
       if (!isValid) {
         return false;
       }
-
       const { columnFilter, comparisonFilter, valueFilter } = filter;
       const planetKey = columnFilter as keyof Planets;
 
@@ -40,14 +37,35 @@ function filterByFilters(planets: Planets[], arrayFilters: Filters[]) {
 }
 
 function Table() {
-  const { planets, nameFilter, filters } = useContext(PlanetContext);
+  const { planets, nameFilter, filters, orderObj } = useContext(PlanetContext);
   const [filteredPlanets, setFilteredPlanets] = useState(
     filterByFilters(filterByName(planets, nameFilter), filters),
   );
 
   useEffect(() => {
     setFilteredPlanets(filterByFilters(filterByName(planets, nameFilter), filters));
-  }, [filters, nameFilter, planets]);
+
+    if (orderObj.order.column !== '') {
+      const sortedPlanets = [...filteredPlanets];
+      sortedPlanets.sort((a, b) => {
+        const planetA = a[orderObj.order.column as keyof Planets];
+        const planetB = b[orderObj.order.column as keyof Planets];
+        // Tratamento especial para 'unknown'
+        if (planetA === 'unknown' && planetB === 'unknown') {
+          return a.name.localeCompare(b.name);
+        } if (planetA === 'unknown') {
+          return 1;
+        } if (planetB === 'unknown') {
+          return -1;
+        }
+        const sortOrder = orderObj.order.sort === 'ASC' ? 1 : -1;
+        // Lógica de ordenação
+        return (Number(planetA) - Number(planetB)) * sortOrder;
+      });
+      // Atualize o estado com a lista ordenada
+      setFilteredPlanets(sortedPlanets);
+    }
+  }, [filters, nameFilter, planets, orderObj, filteredPlanets]);
 
   return (
     <main>

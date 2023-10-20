@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Filters, Planets } from '../type';
+import { Filters, Order, Planets } from '../type';
 
 type PlanetContextType = {
   planets: Planets[],
@@ -8,6 +8,8 @@ type PlanetContextType = {
   handleFilters: (dataFilters: Filters) => void,
   filters: Filters[],
   handleDelete: (filterDelet: string) => void,
+  orderObj: { order: Order },
+  handleOrder: (orderParam: Order) => void,
 };
 
 const PlanetContext = createContext({} as PlanetContextType);

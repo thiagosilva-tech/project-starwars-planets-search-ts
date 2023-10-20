@@ -14,6 +14,11 @@ const INITIAL_FILTERS = {
   valueFilter: 0,
 };
 
+const INITIAL_ORDER = {
+  column: 'population',
+  sort: 'ASC',
+};
+
 function findFilters(filters: Filters[]) {
   const filterSet = new Set(filters.map((f) => f.columnFilter));
   return INITIAL_KEYS_FILTER.filter((filter) => !filterSet.has(filter));
@@ -21,16 +26,17 @@ function findFilters(filters: Filters[]) {
 
 function Header() {
   const {
-    planets,
     handleFilterChange,
     nameFilter,
     filters,
     handleFilters,
     handleDelete,
+    handleOrder,
   } = useContext(PlanetContext);
   const [keysFilter, setKeysFilter] = useState(INITIAL_KEYS_FILTER);
-  const [keysOrder, setKeysOrder] = useState(Object.keys(planets[0]));
+  const keysOrder = INITIAL_KEYS_FILTER;
   const [newFilter, setNewFilter] = useState(INITIAL_FILTERS);
+  const [newOrder, setNewOrder] = useState(INITIAL_ORDER);
 
   useEffect(() => {
     const newKeysFilter = findFilters(filters);
@@ -39,7 +45,6 @@ function Header() {
   }, [filters]);
 
   const handleSubmit = () => {
-    setKeysOrder(keysOrder);
     handleFilters(newFilter);
   };
 
@@ -49,6 +54,15 @@ function Header() {
   ) => {
     setNewFilter({
       ...newFilter,
+      [target.name]: target.value });
+  };
+
+  const handleChangeOrder = (
+    { target }: React.ChangeEvent<HTMLSelectElement>
+    | React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setNewOrder({
+      ...newOrder,
       [target.name]: target.value });
   };
 
@@ -135,16 +149,45 @@ function Header() {
         <label htmlFor="select_order">
           Ordenar
         </label>
-        <select name="" id="select_order">
+        <select
+          id="select_order"
+          data-testid="column-sort"
+          name="column"
+          value={ newOrder.column }
+          onChange={ handleChangeOrder }
+        >
           {keysOrder.map((key) => {
             return <option key={ key }>{key}</option>;
           })}
         </select>
-        <input name="orderOfPlanets" type="radio" id="ascendente" value="ascendente" />
+        <input
+          name="sort"
+          type="radio"
+          id="ascendente"
+          value="ASC"
+          checked={ newOrder.sort === 'ASC' }
+          onChange={ handleChangeOrder }
+          data-testid="column-sort-input-asc"
+        />
         <label htmlFor="ascendente">Ascendente</label>
-        <input name="orderOfPlanets" type="radio" id="descendente" value="descendente" />
+        <input
+          name="sort"
+          type="radio"
+          id="descendente"
+          value="DESC"
+          checked={ newOrder.sort === 'DESC' }
+          onChange={ handleChangeOrder }
+          data-testid="column-sort-input-desc"
+        />
         <label htmlFor="descendente">Descendente</label>
-        <button className="btn">Ordenar</button>
+        <button
+          className="btn"
+          type="button"
+          onClick={ () => handleOrder(newOrder) }
+          data-testid="column-sort-button"
+        >
+          Ordenar
+        </button>
       </form>
       <button
         className="btn"

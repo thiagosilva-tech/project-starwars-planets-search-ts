@@ -20,3 +20,12 @@ export type Filters = {
   comparisonFilter: string,
   valueFilter: number,
 };
+
+export type Order = {
+  column: string,
+  sort: string,
+};
+
+export type OrderObj = {
+  order: Order,
+};
