@@ -15,7 +15,7 @@ describe('Testa se os filters e sort',()=>{
     vi.clearAllMocks();
   });
 
-  test.only('Testa se o name-filter filtra os planetas pelo nome', async ()=> {
+  test('Testa se o name-filter filtra os planetas pelo nome', async ()=> {
        const loading = screen.getByText('Loading...');
      await waitForElementToBeRemoved(loading);
 
@@ -25,7 +25,7 @@ describe('Testa se os filters e sort',()=>{
     
     act(async () => {
       await userEvent.type(inputNameFilter, 'o');
-      const firstPlanetsFilter = await screen.findAllByTestId('planet-name');
+      const firstPlanetsFilter = screen.getAllByTestId('planet-name');
       expect(firstPlanetsFilter).toHaveLength(7);
       await userEvent.clear(inputNameFilter);
       await userEvent.type(inputNameFilter, "oo");
@@ -41,7 +41,25 @@ describe('Testa se os filters e sort',()=>{
     const valueFilter = screen.getByTestId('column-filter');
 
     await userEvent.type(valueFilter, '1000');
-    const planetsFilter = await screen.findAllByTestId('planet-name');
+    const planetsFilter = screen.getAllByTestId('planet-name');
     expect(planetsFilter).toHaveLength(7);
+    const btnRemoveFilters = screen.getByTestId('button-remove-filters');
+    await userEvent.click(btnRemoveFilters);
+    const planetsWithoutFilters = screen.getAllByTestId('planet-name');
+    expect(planetsWithoutFilters).toHaveLength(10);
+
  });
+
+ test('Testa se o btnSort funciona', async ()=> {   
+  const loading = screen.getByText('Loading...');
+  await waitForElementToBeRemoved(loading);
+ 
+  const btnSort = screen.getByTestId('column-sort-button');
+
+  await userEvent.click(btnSort);
+  const planetsFilter = screen.getAllByTestId('planet-name');
+  
+  expect(planetsFilter[0].innerHTML).toBe('Yavin IV');
+  expect(planetsFilter[9].innerHTML).toBe('Hoth');
+});
 });

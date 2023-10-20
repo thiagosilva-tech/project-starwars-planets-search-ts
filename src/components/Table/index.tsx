@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import PlanetContext from '../../context/PlanetContext';
 import Planet from '../Planet';
-import { Filters, Planets } from '../../type';
+import { Filters, OrderObj, Planets } from '../../type';
 
 function filterByName(planets: Planets[], nameFilter: string) {
   return nameFilter === ''
@@ -36,6 +36,28 @@ function filterByFilters(planets: Planets[], arrayFilters: Filters[]) {
   });
 }
 
+function sortPlanets(planets: Planets[], orderObj:OrderObj) {
+  return planets.slice().sort((a, b) => {
+    const planetA = a[orderObj.order.column as keyof Planets];
+    const planetB = b[orderObj.order.column as keyof Planets];
+
+    if (planetA === 'unknown' && planetB === 'unknown') {
+      return a.name.localeCompare(b.name);
+    }
+
+    if (planetA === 'unknown') {
+      return 1;
+    }
+
+    if (planetB === 'unknown') {
+      return -1;
+    }
+
+    const sortOrder = orderObj.order.sort === 'ASC' ? 1 : -1;
+    return (Number(planetA) - Number(planetB)) * sortOrder;
+  });
+}
+
 function Table() {
   const { planets, nameFilter, filters, orderObj } = useContext(PlanetContext);
   const [filteredPlanets, setFilteredPlanets] = useState(
@@ -43,29 +65,19 @@ function Table() {
   );
 
   useEffect(() => {
-    setFilteredPlanets(filterByFilters(filterByName(planets, nameFilter), filters));
+    // Filtrar por nome e outros filtros
+    const filtered = filterByFilters(filterByName(planets, nameFilter), filters);
 
     if (orderObj.order.column !== '') {
-      const sortedPlanets = [...filteredPlanets];
-      sortedPlanets.sort((a, b) => {
-        const planetA = a[orderObj.order.column as keyof Planets];
-        const planetB = b[orderObj.order.column as keyof Planets];
-        // Tratamento especial para 'unknown'
-        if (planetA === 'unknown' && planetB === 'unknown') {
-          return a.name.localeCompare(b.name);
-        } if (planetA === 'unknown') {
-          return 1;
-        } if (planetB === 'unknown') {
-          return -1;
-        }
-        const sortOrder = orderObj.order.sort === 'ASC' ? 1 : -1;
-        // Lógica de ordenação
-        return (Number(planetA) - Number(planetB)) * sortOrder;
-      });
-      // Atualize o estado com a lista ordenada
+      // Ordenar os planetas
+      const sortedPlanets = sortPlanets(filtered, orderObj);
+      // Atualizar o estado com a lista ordenada
       setFilteredPlanets(sortedPlanets);
+    } else {
+      // Se não houver critério de ordenação, atualize o estado com a lista filtrada
+      setFilteredPlanets(filtered);
     }
-  }, [filters, nameFilter, planets, orderObj, filteredPlanets]);
+  }, [nameFilter, filters, orderObj, planets]);
 
   return (
     <main>
