@@ -10,7 +10,6 @@ const INITIAL_ORDER_OBJ = { order: { column: '', sort: '' } };
 
 function App() {
   const [planets, setPlanets] = useState<Planets[]>([]);
-  const [loading, setLoading] = useState(true);
   const [nameFilter, setNameFilter] = useState('');
   const [filters, setFilters] = useState<Filters[]>([]);
   const [orderObj, setOrderObj] = useState<OrderObj>(INITIAL_ORDER_OBJ);
@@ -22,7 +21,6 @@ function App() {
       const planetsArray = planetsResults
         .map((planet: Planets) => { delete planet.residents; return planet; });
       setPlanets(planetsArray);
-      setLoading(false);
     }
 
     fetchData();
@@ -47,10 +45,6 @@ function App() {
   const handleOrder = (orderParam: Order) => {
     setOrderObj({ order: orderParam });
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <PlanetContext.Provider

@@ -70,7 +70,7 @@ function Table() {
   return (
     <main>
       <table>
-        <thead>
+        <thead data-testid="column-header">
           <tr>
             <th>Name</th>
             <th>Rotation Period</th>
@@ -87,7 +87,7 @@ function Table() {
             <th>Url</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody data-testid="column-body">
           {filteredPlanets.map((planet) => {
             return (
               <Planet key={ planet.name } planet={ planet } />
